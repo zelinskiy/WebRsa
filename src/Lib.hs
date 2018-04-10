@@ -14,6 +14,7 @@ import Servant
 import Data.Char (chr)
 
 type API = "encode" :> Capture "e" Integer :> Capture "n" Integer :> Capture "msg" String :> Get '[JSON] String
+  :<|> "decode" :> Capture "d" Integer :> Capture "n" Integer :> Capture "msg" String :> Get '[JSON] String
   :<|> "static" :> Raw
 
 startApp :: IO ()
@@ -21,6 +22,7 @@ startApp = run 8080 $ serve (Proxy :: Proxy API) server
 
 server :: Server API
 server = (\e n m -> return (encrypt e n m))
+  :<|> (\e n m -> return (decrypt e n m))
   :<|> serveDirectoryFileServer "./static"
 
 encrypt :: Integer -> Integer -> String -> String
@@ -32,22 +34,26 @@ encrypt 0 0 msg =
       e           =  myE tot
       n           = p1  * p2 
       rsa_encoded =  rsa_encode n e $ encode msg      
-      encrypted   = concatMap show rsa_encoded
+      encrypted   = show rsa_encoded
       d           =  myD e n tot
       decrypted   = decode $ rsa_decode d n rsa_encoded
-  in "enc:"       ++ encrypted
-      ++ "; dec:" ++ decrypted
-      ++ "; p1:"  ++ show p1
-      ++ "; p2:"  ++ show p2
-      ++ "; tot:" ++ show tot
-      ++ "; e:"   ++ show e
-      ++ "; n:"   ++ show n
-      ++ "; d:"   ++ show d
+  in "enc: "       ++ encrypted
+      ++ "; dec: " ++ decrypted
+      ++ "; p1: "  ++ show p1
+      ++ "; p2: "  ++ show p2
+      ++ "; tot: " ++ show tot
+      ++ "; e: "   ++ show e
+      ++ "; n: "   ++ show n
+      ++ "; d: "   ++ show d
 encrypt e n msg =
   let rsa_encoded = rsa_encode n e $ encode msg
       encrypted   = concatMap show rsa_encoded
   in "enc:" ++ encrypted
 
+decrypt :: Integer -> Integer -> String -> String
+decrypt d n msg = 
+  let decrypted = decode $ rsa_decode d n (read msg)
+  in "dec: " ++ decrypted     
 
 
 encode :: String -> [Integer]

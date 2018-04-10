@@ -13,6 +13,21 @@ function encodeRequest(){
     out.innerHTML = xhr.responseText
 }
 
+function decodeRequest(){
+    inp = document.getElementById("inp");
+    msg = inp.value
+
+    var d = document.getElementById("d").value;
+    var n = document.getElementById("n").value
+    
+    var xhr = new XMLHttpRequest();      
+    xhr.open('GET', '../decode/' + d + '/' + n + '/' + msg, false);
+    xhr.send();
+    
+    out = document.getElementById("out");
+    out.innerHTML = xhr.responseText
+}
+
 // get two last primes
 function getPrimes(max) {
     var sieve = [], i, j, primes = [];
@@ -49,8 +64,36 @@ function myE(tot) {
     }
 }
 
+function myD(e, n, phi) {
+    for (d = 1; d < n; n++){
+	if ((d * e) % phi == 1) return d;
+    }
+}
+
+function toFixed(x) {
+  if (Math.abs(x) < 1.0) {
+    var e = parseInt(x.toString().split('e-')[1]);
+    if (e) {
+        x *= Math.pow(10,e-1);
+        x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+    }
+  } else {
+    var e = parseInt(x.toString().split('+')[1]);
+    if (e > 20) {
+        e -= 20;
+        x /= Math.pow(10,e);
+        x += (new Array(e+1)).join('0');
+    }
+  }
+  return x;
+}
+
+
 function rsa_keys(){
-    var ps = getPrimes(rand(100, 1000));
+    var from = parseInt(document.getElementById("from").value)
+    var to = parseInt(document.getElementById("to").value)
+    var start = performance.now();
+    var ps = getPrimes(rand(from, to));
     var p1 = ps[0]
     document.getElementById("p1").value = p1
     var p2 = ps[1]    
@@ -60,5 +103,10 @@ function rsa_keys(){
     var e = myE(tot);
     document.getElementById("e").value = e
     var n = p1 * p2;
-    document.getElementById("n").value = n    
+    document.getElementById("n").value = n
+    //var d = myD(e, n, tot);
+    //document.getElementById("d").value = d;
+    var end = performance.now();
+    document.getElementById("t").innerHTML =
+	(end - start).toPrecision(3);
 }

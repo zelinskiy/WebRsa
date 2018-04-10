@@ -6,16 +6,24 @@
   <body>
     <script src="./main.js"></script>
     <p>Hello</p>
-    <button onclick="encodeRequest()">Encode!</button>
-    <button onclick="rsa_keys()">Keys</button>
+    
+    <button onclick="rsa_keys()">Keys</button>    
     <input id = "inp" type="text" value="abcdef"/>
+    <button onclick="encodeRequest()">Encode!</button>
+    <button onclick="decodeRequest()">Decode!</button>
+
+    <p>from: <input id="from" value="100"/></p>
+    <p>to: <input id="to" value="1000"/></p>
     <p>p1: <input id="p1" value="0"/></p>
     <p>p2: <input id="p2" value="0"/></p>
     <p>tot: <input id="tot" value="0"/></p>
     <p>e: <input id="e" value="0"/></p>
     <p>n: <input id="n" value="0"/></p>
-    <!--p>d: <input id="d" value="0"/></p-->
-    <p id="out"></p>   
+    <p>d: <input id="d" value="0"/></p>
+    <p>t: <span id="t">0</span> ms</p>
+    
+    
+    <p>result: <span id="out"></span> </p> 
     
   </body>
 </html>
